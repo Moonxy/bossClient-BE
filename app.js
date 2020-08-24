@@ -9,13 +9,12 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-/*解决跨域问题*/
+/*解决跨域携带cookie问题*/
 app.all('*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+  res.header("Access-Control-Allow-Origin", req.headers.origin); //需要显示设置来源
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By",' 3.2.1')
-  res.header("Content-Type", "application/json;charset=utf-8");
+  res.header("Access-Control-Allow-Credentials",true); //带cookies7     res.header("Content-Type", "application/json;charset=utf-8");
   next();
 });
 
