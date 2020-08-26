@@ -2,10 +2,6 @@ const express = require('express')
 const router = express.Router()
 const Boss = require('./boss')
 
-router.get('/', (req, res) => {
-  res.send('aaa')
-})
-
 router.post('/register', (req, res) => {
   const {username, type, password} = req.body
 
@@ -48,6 +44,15 @@ router.post('/update', (req, res) => {
       let data = Object.assign(user, {type, username, _id})
       res.send({code: 0, data})
     }
+  })
+})
+
+router.get('/user', (req, res) => {
+  const userId = req.cookies.userId
+  if(!userId)
+    return res.send({code:1, msg:'请先登录'})
+  Boss.findOne({_id: userId}, (err, user) => {
+    res.send({code:0, data:user})
   })
 })
 
