@@ -56,4 +56,11 @@ router.get('/user', (req, res) => {
   })
 })
 
+router.get('/userlist', (req, res) => {
+  const {type} = req.query
+  Boss.find({type}, (err, users) => {
+    res.send({code:0, data:users})
+  })
+})
+
 module.exports = router
