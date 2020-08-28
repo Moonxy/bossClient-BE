@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const Boss = require('./boss')
+const {Boss, Chat} = require('../db/model')
 
 router.post('/register', (req, res) => {
   const {username, type, password} = req.body
@@ -60,6 +60,29 @@ router.get('/userlist', (req, res) => {
   const {type} = req.query
   Boss.find({type}, (err, users) => {
     res.send({code:0, data:users})
+  })
+})
+
+router.get('/msglist', (req, res) => {
+  const userId = req.cookies.userId
+
+  Boss.find((err, bossDoc) => {
+    let users = {}
+    users = bossDoc.reduce((pre, cur) => {
+      return pre[cur._id] = {username: cur.username, header: cur.header}
+    }, {})
+  })
+
+  Chat.find({'$or': [{from: userId, to: userId}]},(err, chatMsgs) => {
+    res.send({code: 0, data: {users, chatMsgs}})
+  })
+})
+
+router.post('/readmsg', (req, res) => {
+  const from = req.body.from
+  const to = req.cookies.userId
+  Chat.update({from, to, read: false}, {read: true}, {multi: true}, (err, doc) => {
+    res.send({code: 0, data: doc.nModified}) /*更新的数量*/
   })
 })
 
